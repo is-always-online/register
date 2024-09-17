@@ -23,22 +23,36 @@ jobs:
             AAAA_RECORDS=$(jq -r '.record.AAAA[]?' $FILE)
             CNAME_RECORD=$(jq -r '.record.CNAME?' $FILE)
             URL_RECORD=$(jq -r '.record.URL?' $FILE)
-            TXT_RECORDS=$(jq -r '.record.TXT?' $FILE)
+            TXT_RECORDS=$(jq -r '.record.TXT[]?' $FILE)
             PROXIED=$(jq -r '.proxied // false' $FILE)
+
+            # Function to check if a record exists
+            function record_exists() {
+              RECORD_TYPE=$1
+              RECORD_NAME=$2
+              curl -s -X GET "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records?type=${RECORD_TYPE}&name=${RECORD_NAME}" \
+                --header "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+                --header "Content-Type: application/json" | jq -r '.result[]? | select(.content == "'$3'")'
+            }
 
             if [ -n "$A_RECORDS" ]; then
               for A in $A_RECORDS; do
                 if [ "$A" != "null" ]; then
-                  echo "Adding A record for $SUBDOMAIN: $A"
-                  curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
-                    --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-                    --header 'Content-Type: application/json' \
-                    --data '{
-                      "type": "A",
-                      "name": "'$SUBDOMAIN'",
-                      "content": "'$A'",
-                      "proxied": '$PROXIED'
-                    }'
+                  EXISTING_RECORD=$(record_exists "A" "$SUBDOMAIN" "$A")
+                  if [ -z "$EXISTING_RECORD" ]; then
+                    echo "Adding A record for $SUBDOMAIN: $A"
+                    curl -s -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
+                      --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+                      --header 'Content-Type: application/json' \
+                      --data '{
+                        "type": "A",
+                        "name": "'$SUBDOMAIN'",
+                        "content": "'$A'",
+                        "proxied": '$PROXIED'
+                      }'
+                  else
+                    echo "A record for $SUBDOMAIN with content $A already exists."
+                  fi
                 fi
               done
             fi
@@ -46,45 +60,60 @@ jobs:
             if [ -n "$AAAA_RECORDS" ]; then
               for AAAA in $AAAA_RECORDS; do
                 if [ "$AAAA" != "null" ]; then
-                  echo "Adding AAAA record for $SUBDOMAIN: $AAAA"
-                  curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
-                    --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-                    --header 'Content-Type: application/json' \
-                    --data '{
-                      "type": "AAAA",
-                      "name": "'$SUBDOMAIN'",
-                      "content": "'$AAAA'",
-                      "proxied": '$PROXIED'
-                    }'
+                  EXISTING_RECORD=$(record_exists "AAAA" "$SUBDOMAIN" "$AAAA")
+                  if [ -z "$EXISTING_RECORD" ]; then
+                    echo "Adding AAAA record for $SUBDOMAIN: $AAAA"
+                    curl -s -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
+                      --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+                      --header 'Content-Type: application/json' \
+                      --data '{
+                        "type": "AAAA",
+                        "name": "'$SUBDOMAIN'",
+                        "content": "'$AAAA'",
+                        "proxied": '$PROXIED'
+                      }'
+                  else
+                    echo "AAAA record for $SUBDOMAIN with content $AAAA already exists."
+                  fi
                 fi
               done
             fi
 
             if [ -n "$CNAME_RECORD" ] && [ "$CNAME_RECORD" != "null" ]; then
-              echo "Adding CNAME record for $SUBDOMAIN: $CNAME_RECORD"
-              curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
-                --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-                --header 'Content-Type: application/json' \
-                --data '{
-                  "type": "CNAME",
-                  "name": "'$SUBDOMAIN'",
-                  "content": "'$CNAME_RECORD'",
-                  "proxied": '$PROXIED'
-                }'
+              EXISTING_RECORD=$(record_exists "CNAME" "$SUBDOMAIN" "$CNAME_RECORD")
+              if [ -z "$EXISTING_RECORD" ]; then
+                echo "Adding CNAME record for $SUBDOMAIN: $CNAME_RECORD"
+                curl -s -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
+                  --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+                  --header 'Content-Type: application/json' \
+                  --data '{
+                    "type": "CNAME",
+                    "name": "'$SUBDOMAIN'",
+                    "content": "'$CNAME_RECORD'",
+                    "proxied": '$PROXIED'
+                  }'
+              else
+                echo "CNAME record for $SUBDOMAIN with content $CNAME_RECORD already exists."
+              fi
             fi
 
             if [ -n "$TXT_RECORDS" ]; then
               for TXT in $TXT_RECORDS; do
                 if [ "$TXT" != "null" ]; then
-                  echo "Adding TXT record for $SUBDOMAIN: $TXT"
-                  curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
-                    --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-                    --header 'Content-Type: application/json' \
-                    --data '{
-                      "type": "TXT",
-                      "name": "'$SUBDOMAIN'",
-                      "content": "'$TXT'"
-                    }'
+                  EXISTING_RECORD=$(record_exists "TXT" "$SUBDOMAIN" "$TXT")
+                  if [ -z "$EXISTING_RECORD" ]; then
+                    echo "Adding TXT record for $SUBDOMAIN: $TXT"
+                    curl -s -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
+                      --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+                      --header 'Content-Type: application/json' \
+                      --data '{
+                        "type": "TXT",
+                        "name": "'$SUBDOMAIN'",
+                        "content": "'$TXT'"
+                      }'
+                  else
+                    echo "TXT record for $SUBDOMAIN with content $TXT already exists."
+                  fi
                 fi
               done
             fi
