@@ -40,4 +40,4 @@ You can check the uptime of our services on our [status dashboard](https://statu
 
 If you like this project, please consider donating so we can keep this project running forever!
 
-<a href="https://ko-fi.com/sampathgujarathi" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me a Coffee" height="28" width="119"></a>
+<a href='https://ko-fi.com/K3K0QX2YQ' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' alt='Buy Me a Coffee at ko-fi.com' /></a>

@@ -59,37 +59,7 @@ jobs:
                 --data '{"type":"CNAME","name":"'$SUBDOMAIN'","content":"'$CNAME_RECORD'","ttl":120,"proxied":false}' \
                 | jq .
             fi
-
-            if [ -n "$URL_RECORD" ]; then
-              echo "Adding URL forwarding for $SUBDOMAIN: $URL_RECORD"
-              curl -s -X POST "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/pagerules" \
-                -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-                -H "Content-Type: application/json" \
-                --data '{
-                  "targets": [
-                    {
-                      "target": "url",
-                      "constraint": {
-                        "operator": "matches",
-                        "value": "https://'$SUBDOMAIN'.is-always.online/*"
-                      }
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "id": "forwarding_url",
-                      "value": {
-                        "url": "'$URL_RECORD'",
-                        "status_code": 301
-                      }
-                    }
-                  ],
-                  "priority": 1,
-                  "status": "active"
-                }' \
-                | jq .
-            fi
-
+            
             if [ -n "$TXT_RECORDS" ]; then
               for TXT in $TXT_RECORDS; do
                 echo "Adding TXT record for $SUBDOMAIN: $TXT"
