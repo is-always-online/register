@@ -18,6 +18,7 @@ jobs:
             echo "Processing $FILE..."
             FILENAME=$(basename "$FILE" .json)
             SUBDOMAIN="${FILENAME}.is-always.online"
+            echo "Subdomain: $SUBDOMAIN"
 
             A_RECORDS=$(jq -r '.record.A[]?' $FILE)
             AAAA_RECORDS=$(jq -r '.record.AAAA[]?' $FILE)
@@ -25,14 +26,22 @@ jobs:
             URL_RECORD=$(jq -r '.record.URL?' $FILE)
             TXT_RECORDS=$(jq -r '.record.TXT[]?' $FILE)
             PROXIED=$(jq -r '.proxied // false' $FILE)
+            echo "A Records: $A_RECORDS"
+            echo "AAAA Records: $AAAA_RECORDS"
+            echo "CNAME Record: $CNAME_RECORD"
+            echo "TXT Records: $TXT_RECORDS"
+            echo "Proxied: $PROXIED"
 
             # Function to check if a record exists
             function record_exists() {
               RECORD_TYPE=$1
               RECORD_NAME=$2
-              curl -s -X GET "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records?type=${RECORD_TYPE}&name=${RECORD_NAME}" \
+              RECORD_CONTENT=$3
+              RESPONSE=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records?type=${RECORD_TYPE}&name=${RECORD_NAME}" \
                 --header "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-                --header "Content-Type: application/json" | jq -r '.result[]? | select(.content == "'$3'")'
+                --header "Content-Type: application/json")
+              echo "API Response for $RECORD_TYPE record: $RESPONSE"
+              echo "$RESPONSE" | jq -r '.result[]? | select(.content == "'$RECORD_CONTENT'")'
             }
 
             if [ -n "$A_RECORDS" ]; then
