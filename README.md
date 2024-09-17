@@ -12,9 +12,10 @@
 
 <p align="center"><strong>is-always-online</strong> is a service that allows developers to get ".is-always.online" domain for their websites, api service.</p>
 
-<p align="center">
-   <a href="https://discord.gg/is-a-dev-830872854677422150"><img alt="Discord Server" src="https://invidget.switchblade.xyz/is-a-dev-830872854677422150"></a>
-</p>
+### Discord Server
+
+Make sure to join our Discord server:
+https://discord.gg/78Mc4UVqMV
 
 ## Issues
 
@@ -28,6 +29,27 @@ If you have an issue that contains confidental infomation, send an email to secu
 
 - [Fork](https://github.com/is-always-online/register/fork) and star this repository
 - Add a new file called `your-domain-name.json` in the `domains` folder to register `your-domain-name.is-always.online`
+
+```json
+{
+  "description": "Project Description",
+  "subdomain": "example",
+  "owner": {
+    "repo": "https://github.com/username/repo",
+    "email": "hello@example.com"
+  },
+  "record": {
+    "A": ["1.1.1.1", "1.0.0.1"],
+    "AAAA": ["::1", "::2"],
+    "CNAME": "example.com",
+    "MX": ["mx1.example.com", "mx2.example.com"],
+    "TXT": ["example_verification=1234567890"]
+  },
+
+  "proxied": false
+}
+```
+
 - Your pull request will be reviewed and merged. _Make sure to keep an eye on it incase we need you to make any changes!_
 - After the pull request is merged, please allow up to 24 hours for the changes to propagate
 - Enjoy your new `.is-always.online` domain!

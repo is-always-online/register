@@ -24,6 +24,7 @@ jobs:
             CNAME_RECORD=$(jq -r '.record.CNAME?' $FILE)
             URL_RECORD=$(jq -r '.record.URL?' $FILE)
             TXT_RECORDS=$(jq -r '.record.TXT[]?' $FILE)
+            PROXIED=$(jq -r '.proxied // false' $FILE)
 
             if [ -n "$A_RECORDS" ]; then
               for A in $A_RECORDS; do
@@ -35,7 +36,7 @@ jobs:
                     "type": "A",
                     "name": "'$SUBDOMAIN'",
                     "content": "'$A'",
-                    "proxied": false
+                    "proxied": '$PROXIED'
                   }'
               done
             fi
@@ -50,7 +51,7 @@ jobs:
                     "type": "AAAA",
                     "name": "'$SUBDOMAIN'",
                     "content": "'$AAAA'",
-                    "proxied": false
+                    "proxied": '$PROXIED'
                   }'
               done
             fi
@@ -64,7 +65,7 @@ jobs:
                   "type": "CNAME",
                   "name": "'$SUBDOMAIN'",
                   "content": "'$CNAME_RECORD'",
-                  "proxied": false
+                  "proxied": '$PROXIED'
                 }'
             fi
 
@@ -77,7 +78,8 @@ jobs:
                   --data '{
                     "type": "TXT",
                     "name": "'$SUBDOMAIN'",
-                    "content": "'$TXT'"
+                    "content": "'$TXT'",
+                    "proxied": '$PROXIED'
                   }'
               done
             fi
