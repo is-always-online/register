@@ -1,0 +1,10 @@
+{
+"description": "fakeprofile.is-always.online",
+"owner": {
+    "username": "sampathgujarathi",
+    "discord": "sampathgujarathi"
+},
+"record": {
+    "CNAME": "cname.vercel-dns.com"
+}
+}
