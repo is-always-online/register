@@ -14,9 +14,9 @@ jobs:
 
       - name: Parse JSON files
         run: |
-          # Loop through each file in the domains folder
           for FILE in domains/*.json; do
             echo "Processing $FILE..."
+            FILENAME=$(basename "$FILE" .json)
             SUBDOMAIN="${FILENAME}.is-always.online"
 
             OWNER=$(jq -r '.owner.username' $FILE)
@@ -32,42 +32,38 @@ jobs:
             if [ -n "$A_RECORDS" ]; then
               for A in $A_RECORDS; do
                 echo "Adding A record for $SUBDOMAIN: $A"
-                curl -s -X POST "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records" \
+                curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" \
                   -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
                   -H "Content-Type: application/json" \
-                  --data '{"type":"A","name":"'$SUBDOMAIN'","content":"'$A'","ttl":120,"proxied":false}' \
-                  | jq .
+                  --data '{"type":"A","name":"'$SUBDOMAIN'","content":"'$A'","ttl":120,"proxied":false}'
               done
             fi
 
             if [ -n "$AAAA_RECORDS" ]; then
               for AAAA in $AAAA_RECORDS; do
                 echo "Adding AAAA record for $SUBDOMAIN: $AAAA"
-                curl -s -X POST "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records" \
+                curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" \
                   -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
                   -H "Content-Type: application/json" \
-                  --data '{"type":"AAAA","name":"'$SUBDOMAIN'","content":"'$AAAA'","ttl":120,"proxied":false}' \
-                  | jq .
+                  --data '{"type":"AAAA","name":"'$SUBDOMAIN'","content":"'$AAAA'","ttl":120,"proxied":false}'
               done
             fi
 
             if [ -n "$CNAME_RECORD" ]; then
               echo "Adding CNAME record for $SUBDOMAIN: $CNAME_RECORD"
-              curl -s -X POST "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records" \
+              curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" \
                 -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
                 -H "Content-Type: application/json" \
-                --data '{"type":"CNAME","name":"'$SUBDOMAIN'","content":"'$CNAME_RECORD'","ttl":120,"proxied":false}' \
-                | jq .
+                --data '{"type":"CNAME","name":"'$SUBDOMAIN'","content":"'$CNAME_RECORD'","ttl":120,"proxied":false}'
             fi
-            
+
             if [ -n "$TXT_RECORDS" ]; then
               for TXT in $TXT_RECORDS; do
                 echo "Adding TXT record for $SUBDOMAIN: $TXT"
-                curl -s -X POST "https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records" \
+                curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" \
                   -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
                   -H "Content-Type: application/json" \
-                  --data '{"type":"TXT","name":"'$SUBDOMAIN'","content":"'$TXT'","ttl":120}' \
-                  | jq .
+                  --data '{"type":"TXT","name":"'$SUBDOMAIN'","content":"'$TXT'","ttl":120}'
               done
             fi
           done
