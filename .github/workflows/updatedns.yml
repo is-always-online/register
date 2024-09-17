@@ -28,35 +28,39 @@ jobs:
 
             if [ -n "$A_RECORDS" ]; then
               for A in $A_RECORDS; do
-                echo "Adding A record for $SUBDOMAIN: $A"
-                curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
-                  --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-                  --header 'Content-Type: application/json' \
-                  --data '{
-                    "type": "A",
-                    "name": "'$SUBDOMAIN'",
-                    "content": "'$A'",
-                    "proxied": '$PROXIED'
-                  }'
+                if [ "$A" != "null" ]; then
+                  echo "Adding A record for $SUBDOMAIN: $A"
+                  curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
+                    --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+                    --header 'Content-Type: application/json' \
+                    --data '{
+                      "type": "A",
+                      "name": "'$SUBDOMAIN'",
+                      "content": "'$A'",
+                      "proxied": '$PROXIED'
+                    }'
+                fi
               done
             fi
 
             if [ -n "$AAAA_RECORDS" ]; then
               for AAAA in $AAAA_RECORDS; do
-                echo "Adding AAAA record for $SUBDOMAIN: $AAAA"
-                curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
-                  --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-                  --header 'Content-Type: application/json' \
-                  --data '{
-                    "type": "AAAA",
-                    "name": "'$SUBDOMAIN'",
-                    "content": "'$AAAA'",
-                    "proxied": '$PROXIED'
-                  }'
+                if [ "$AAAA" != "null" ]; then
+                  echo "Adding AAAA record for $SUBDOMAIN: $AAAA"
+                  curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
+                    --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+                    --header 'Content-Type: application/json' \
+                    --data '{
+                      "type": "AAAA",
+                      "name": "'$SUBDOMAIN'",
+                      "content": "'$AAAA'",
+                      "proxied": '$PROXIED'
+                    }'
+                fi
               done
             fi
 
-            if [ -n "$CNAME_RECORD" ]; then
+            if [ -n "$CNAME_RECORD" ] && [ "$CNAME_RECORD" != "null" ]; then
               echo "Adding CNAME record for $SUBDOMAIN: $CNAME_RECORD"
               curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
                 --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
@@ -71,16 +75,18 @@ jobs:
 
             if [ -n "$TXT_RECORDS" ]; then
               for TXT in $TXT_RECORDS; do
-                echo "Adding TXT record for $SUBDOMAIN: $TXT"
-                curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
-                  --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-                  --header 'Content-Type: application/json' \
-                  --data '{
-                    "type": "TXT",
-                    "name": "'$SUBDOMAIN'",
-                    "content": "'$TXT'",
-                    "proxied": '$PROXIED'
-                  }'
+                if [ "$TXT" != "null" ]; then
+                  echo "Adding TXT record for $SUBDOMAIN: $TXT"
+                  curl -X POST 'https://api.cloudflare.com/client/v4/zones/81f8e4f513c5b3c1236812614510e998/dns_records' \
+                    --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+                    --header 'Content-Type: application/json' \
+                    --data '{
+                      "type": "TXT",
+                      "name": "'$SUBDOMAIN'",
+                      "content": "'$TXT'",
+                      "proxied": '$PROXIED'
+                    }'
+                fi
               done
             fi
           done
