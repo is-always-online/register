@@ -56,7 +56,7 @@ If you have an issue that contains confidental infomation, send an email to secu
 
 ## Status
 
-You can check the uptime of our services on our [status dashboard](https://status.is-always.online).
+You can check the uptime of our services on our [status dashboard](https://status.is-always.online/).
 
 ### Donate
 
