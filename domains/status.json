@@ -1,0 +1,12 @@
+{
+    "description": "Status page for my projects",
+    "subdomain": "status",
+    "owner": {
+        "repo": "https://github.com/sampathgujarathi/fakeprofile",
+        "email": "me@sampath.tech"
+    },
+    "record": {
+        "A": "69.30.249.53 "
+    },
+    "proxied": false
+}
