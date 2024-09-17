@@ -83,8 +83,7 @@ jobs:
                     --data '{
                       "type": "TXT",
                       "name": "'$SUBDOMAIN'",
-                      "content": "'$TXT'",
-                      "proxied": '$PROXIED'
+                      "content": "'$TXT'"
                     }'
                 fi
               done
