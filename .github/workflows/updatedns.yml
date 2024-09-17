@@ -23,7 +23,7 @@ jobs:
             AAAA_RECORDS=$(jq -r '.record.AAAA[]?' $FILE)
             CNAME_RECORD=$(jq -r '.record.CNAME?' $FILE)
             URL_RECORD=$(jq -r '.record.URL?' $FILE)
-            TXT_RECORDS=$(jq -r '.record.TXT[]?' $FILE)
+            TXT_RECORDS=$(jq -r '.record.TXT?' $FILE)
             PROXIED=$(jq -r '.proxied // false' $FILE)
 
             if [ -n "$A_RECORDS" ]; then
