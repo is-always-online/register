@@ -1,13 +1,12 @@
 {
-    "description": "Verification for discord",
-    "subdomain": "_discord.samapth",
-    "owner": {
-      "repo": "https://github.com/sampathgujarathi/fakeprofile",
-      "email": "me@sampath.tech"
-    },
-    "record": {
-      "TXT": "dh=54312ba2e9387a9fd8a4e95581c57a26468ef072"
-    },
-  
-    "proxied": false
-  }
+  "description": "Verification for discord",
+  "subdomain": "_discord.samapth",
+  "owner": {
+    "repo": "https://github.com/sampathgujarathi/fakeprofile",
+    "email": "me@sampath.tech"
+  },
+  "record": {
+    "TXT": "dh=54312ba2e9387a9fd8a4e95581c57a26468ef072"
+  },
+  "proxied": false
+}
